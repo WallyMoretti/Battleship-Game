@@ -1,5 +1,6 @@
 package com.codeoftheweb.salvo;
 
+import com.codeoftheweb.salvo.enums.ShipType;
 import com.codeoftheweb.salvo.models.Game;
 import com.codeoftheweb.salvo.models.GamePlayer;
 import com.codeoftheweb.salvo.models.Player;
@@ -84,16 +85,16 @@ public class SalvoApplication {
 
             // -- Ship -- //
             // Game 1
-            Ship ship1 = shipRepository.save(new Ship("Submarine", gamePlayer1, Arrays.asList("E1", "F1", "G1")));
-            Ship ship2 = shipRepository.save(new Ship("Patrol Boat", gamePlayer1, Arrays.asList("B4", "B5")));
-            Ship ship4 = shipRepository.save(new Ship("Destroyer", gamePlayer2, Arrays.asList("B5", "C5", "D5")));
-            Ship ship5 = shipRepository.save(new Ship("Patrol Boat", gamePlayer2, Arrays.asList("F1", "F2")));
+            Ship ship1 = shipRepository.save(new Ship(ShipType.SUBMARINE, gamePlayer1, Arrays.asList("E1", "F1", "G1")));
+            Ship ship2 = shipRepository.save(new Ship(ShipType.PATROL_BOAT, gamePlayer1, Arrays.asList("B4", "B5")));
+            Ship ship4 = shipRepository.save(new Ship(ShipType.DESTROYER, gamePlayer2, Arrays.asList("B5", "C5", "D5")));
+            Ship ship5 = shipRepository.save(new Ship(ShipType.PATROL_BOAT, gamePlayer2, Arrays.asList("F1", "F2")));
 
             // Game 2
-            Ship ship6 = shipRepository.save(new Ship("Destroyer", gamePlayer3, Arrays.asList("B5", "C5", "D5")));
-            Ship ship7 = shipRepository.save(new Ship("Patrol Boat", gamePlayer3, Arrays.asList("C6", "C7")));
-            Ship ship8 = shipRepository.save(new Ship("Submarine", gamePlayer4, Arrays.asList("A2", "A3", "A4")));
-            Ship ship9 = shipRepository.save(new Ship("Patrol Boat", gamePlayer4, Arrays.asList("G6", "H6")));
+            Ship ship6 = shipRepository.save(new Ship(ShipType.DESTROYER, gamePlayer3, Arrays.asList("B5", "C5", "D5")));
+            Ship ship7 = shipRepository.save(new Ship(ShipType.PATROL_BOAT, gamePlayer3, Arrays.asList("C6", "C7")));
+            Ship ship8 = shipRepository.save(new Ship(ShipType.SUBMARINE, gamePlayer4, Arrays.asList("A2", "A3", "A4")));
+            Ship ship9 = shipRepository.save(new Ship(ShipType.PATROL_BOAT, gamePlayer4, Arrays.asList("G6", "H6")));
         };
     }
 }
