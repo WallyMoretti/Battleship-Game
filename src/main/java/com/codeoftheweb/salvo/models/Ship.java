@@ -1,5 +1,6 @@
 package com.codeoftheweb.salvo.models;
 
+import com.codeoftheweb.salvo.enums.ShipType;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -16,7 +17,7 @@ public class Ship {
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
-    private String type;
+    private ShipType type;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "gamePlayer_id")
@@ -32,7 +33,7 @@ public class Ship {
         shipLocation = new ArrayList<>();
     }
 
-    public Ship(String type, GamePlayer gamePlayer, List<String> shipLocation) {
+    public Ship(ShipType type, GamePlayer gamePlayer, List<String> shipLocation) {
         this();
         this.type = type;
         this.gamePlayer = gamePlayer;
@@ -45,7 +46,7 @@ public class Ship {
         return id;
     }
 
-    public String getType() {
+    public ShipType getType() {
         return type;
     }
 
@@ -59,7 +60,7 @@ public class Ship {
 
 
     // -- Setters -- //
-    public void setType(String type) {
+    public void setType(ShipType type) {
         this.type = type;
     }
 
