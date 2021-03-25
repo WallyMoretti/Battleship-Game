@@ -23,20 +23,20 @@ public class Ship {
     private GamePlayer gamePlayer;
 
     @ElementCollection
-    @Column(name = "cell")
-    private List<String> cells;
+    @Column(name = "location")
+    private List<String> shipLocation;
 
 
     // -- Constructores -- //
     public Ship() {
-        cells = new ArrayList<>();
+        shipLocation = new ArrayList<>();
     }
 
-    public Ship(String type, GamePlayer gamePlayer, List<String> cells) {
+    public Ship(String type, GamePlayer gamePlayer, List<String> shipLocation) {
         this();
         this.type = type;
         this.gamePlayer = gamePlayer;
-        this.cells = cells;
+        this.shipLocation = shipLocation;
     }
 
 
@@ -53,8 +53,8 @@ public class Ship {
         return gamePlayer;
     }
 
-    public List<String> getCells() {
-        return cells;
+    public List<String> getShipLocation() {
+        return shipLocation;
     }
 
 
@@ -74,7 +74,7 @@ public class Ship {
 
         dto.put("id", getId());
         dto.put("type", getType());
-        dto.put("cells", getCells());
+        dto.put("location", getShipLocation());
 
         return dto;
     }

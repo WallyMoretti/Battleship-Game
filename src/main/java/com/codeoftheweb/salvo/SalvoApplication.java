@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Bean;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.List;
 
 @SpringBootApplication
 public class SalvoApplication {
@@ -50,7 +49,7 @@ public class SalvoApplication {
             Game game7 = gameRepository.save(new Game(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(6)));
             Game game8 = gameRepository.save(new Game(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(7)));
 
-            
+
             // -- GamePlayer -- //
             // Game 1
             GamePlayer gamePlayer1 = gamePlayerRepository.save(new GamePlayer(player1, game1)); // j.bauer vs ________
