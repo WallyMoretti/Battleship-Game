@@ -30,29 +30,62 @@ public class SalvoApplication {
     public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository) {
         return (args) -> {
 
-            // Players
-            Player player1 = playerRepository.save(new Player("j.bauer@gmail.com"));
-            Player player2 = playerRepository.save(new Player("c.obrian@gmail.com"));
-            Player player3 = playerRepository.save(new Player("k.bauer@gmail.com"));
-            Player player4 = playerRepository.save(new Player("d.palmer@gmail.com"));
-            Player player5 = playerRepository.save(new Player("m.dessler@gmail.com"));
 
-            // Games
+            // -- Players -- //
+            Player player1 = playerRepository.save(new Player("j.bauer@ctu.gov"));
+            Player player2 = playerRepository.save(new Player("c.obrian@ctu.gov"));
+            Player player3 = playerRepository.save(new Player("kim_bauer@gmail.com"));
+            Player player4 = playerRepository.save(new Player("t.almeida@ctu.gov"));
+            /*Player player5 = playerRepository.save(new Player("d.palmer@gmail.com"));
+            Player player6 = playerRepository.save(new Player("m.dessler@gmail.com"));*/
+
+
+            // -- Games -- //
             Game game1 = gameRepository.save(new Game(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"))));
             Game game2 = gameRepository.save(new Game(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(1)));
             Game game3 = gameRepository.save(new Game(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2)));
+            Game game4 = gameRepository.save(new Game(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(3)));
+            Game game5 = gameRepository.save(new Game(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(4)));
+            Game game6 = gameRepository.save(new Game(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(5)));
+            Game game7 = gameRepository.save(new Game(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(6)));
+            Game game8 = gameRepository.save(new Game(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(7)));
 
-            //GamePlayer
-            GamePlayer gamePlayer1 = gamePlayerRepository.save(new GamePlayer(player1, game1));
-            GamePlayer gamePlayer2 = gamePlayerRepository.save(new GamePlayer(player2, game1));
-            GamePlayer gamePlayer3 = gamePlayerRepository.save(new GamePlayer(player3, game2));
-            GamePlayer gamePlayer4 = gamePlayerRepository.save(new GamePlayer(player4, game2));
-            GamePlayer gamePlayer5 = gamePlayerRepository.save(new GamePlayer(player5, game3));
+            
+            // -- GamePlayer -- //
+            // Game 1
+            GamePlayer gamePlayer1 = gamePlayerRepository.save(new GamePlayer(player1, game1)); // j.bauer vs ________
+            GamePlayer gamePlayer2 = gamePlayerRepository.save(new GamePlayer(player2, game1)); // _______ vs c.obrian
 
-            // Ship
-            List<String> shipPosition;
-            Ship ship1 = shipRepository.save(new Ship("Battleship", gamePlayer1, shipPosition = Arrays.asList("B5", "B6", "B7", "B8")));
-            Ship ship2 = shipRepository.save(new Ship("Cruiser", gamePlayer1, shipPosition = Arrays.asList("F3", "G3", "H3")));
+            // Game 2
+            GamePlayer gamePlayer3 = gamePlayerRepository.save(new GamePlayer(player1, game2)); // j.bauer vs ________
+            GamePlayer gamePlayer4 = gamePlayerRepository.save(new GamePlayer(player2, game2)); // _______ vs c.obrian
+
+            // Game 3
+            GamePlayer gamePlayer5 = gamePlayerRepository.save(new GamePlayer(player2, game3)); // c.obrian vs _________
+            GamePlayer gamePlayer6 = gamePlayerRepository.save(new GamePlayer(player4, game3)); // ________ vs t.almeida
+
+            // Game 4
+            GamePlayer gamePlayer7 = gamePlayerRepository.save(new GamePlayer(player2, game4)); // c.obrian vs _______
+            GamePlayer gamePlayer8 = gamePlayerRepository.save(new GamePlayer(player1, game4)); // ________ vs j.bauer
+
+            // Game 5
+            GamePlayer gamePlayer9 = gamePlayerRepository.save(new GamePlayer(player4, game5)); // t.almeida vs _______
+            GamePlayer gamePlayer10 = gamePlayerRepository.save(new GamePlayer(player1, game5)); // ________ vs j.bauer
+
+            // Game 6
+            GamePlayer gamePlayer11 = gamePlayerRepository.save(new GamePlayer(player3, game6)); // kim_bauer vs ______
+
+            // Game 7
+            GamePlayer gamePlayer12 = gamePlayerRepository.save(new GamePlayer(player4, game7)); // t.almeida vs ______
+
+            // Game 8
+            GamePlayer gamePlayer15 = gamePlayerRepository.save(new GamePlayer(player3, game8)); // kim_bauer vs _________
+            GamePlayer gamePlayer16 = gamePlayerRepository.save(new GamePlayer(player4, game8)); // _________ vs t.almeida
+
+
+            // -- Ship -- //
+            Ship ship1 = shipRepository.save(new Ship("Battleship", gamePlayer1, Arrays.asList("B5", "B6", "B7", "B8")));
+            Ship ship2 = shipRepository.save(new Ship("Cruiser", gamePlayer1, Arrays.asList("F3", "G3", "H3")));
         };
     }
 }
