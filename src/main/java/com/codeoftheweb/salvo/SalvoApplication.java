@@ -94,6 +94,8 @@ public class SalvoApplication {
             // -- Salvo -- //
             Salvo salvo1 = salvoRepository.save(new Salvo(5, gamePlayer1, Arrays.asList("H5")));
             Salvo salvo2 = salvoRepository.save(new Salvo(17, gamePlayer1, Arrays.asList("F4")));
+            Salvo salvo3 = salvoRepository.save(new Salvo(34, gamePlayer2, Arrays.asList("D2")));
+            Salvo salvo4 = salvoRepository.save(new Salvo(12, gamePlayer2, Arrays.asList("A8")));
         };
     }
 }
