@@ -1,14 +1,8 @@
 package com.codeoftheweb.salvo;
 
 import com.codeoftheweb.salvo.enums.ShipType;
-import com.codeoftheweb.salvo.models.Game;
-import com.codeoftheweb.salvo.models.GamePlayer;
-import com.codeoftheweb.salvo.models.Player;
-import com.codeoftheweb.salvo.models.Ship;
-import com.codeoftheweb.salvo.repository.GamePlayerRepository;
-import com.codeoftheweb.salvo.repository.GameRepository;
-import com.codeoftheweb.salvo.repository.PlayerRepository;
-import com.codeoftheweb.salvo.repository.ShipRepository;
+import com.codeoftheweb.salvo.models.*;
+import com.codeoftheweb.salvo.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,7 +21,7 @@ public class SalvoApplication {
     }
 
     @Bean // @Bean --> Permite encapsular el contenido, con la finalidad de otorgar una mejor estructura.
-    public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository) {
+    public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, SalvoRepository salvoRepository) {
         return (args) -> {
 
 
@@ -95,6 +89,11 @@ public class SalvoApplication {
             Ship ship7 = shipRepository.save(new Ship(ShipType.PATROL_BOAT, gamePlayer3, Arrays.asList("C6", "C7")));
             Ship ship8 = shipRepository.save(new Ship(ShipType.SUBMARINE, gamePlayer4, Arrays.asList("A2", "A3", "A4")));
             Ship ship9 = shipRepository.save(new Ship(ShipType.PATROL_BOAT, gamePlayer4, Arrays.asList("G6", "H6")));
+
+
+            // -- Salvo -- //
+            Salvo salvo1 = salvoRepository.save(new Salvo(5, gamePlayer1, Arrays.asList("H5")));
+            Salvo salvo2 = salvoRepository.save(new Salvo(17, gamePlayer1, Arrays.asList("F4")));
         };
     }
 }

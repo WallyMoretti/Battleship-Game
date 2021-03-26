@@ -16,11 +16,11 @@ public class Salvo {
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
+    private int turn;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "gamePlayer_id")
     private GamePlayer gamePlayer;
-
-    private int turn;
 
     @ElementCollection
     @Column(name = "location")
@@ -32,10 +32,10 @@ public class Salvo {
         salvoLocation = new ArrayList<>();
     }
 
-    public Salvo(GamePlayer gamePlayer, int turn, List<String> salvoLocation) {
+    public Salvo(int turn, GamePlayer gamePlayer, List<String> salvoLocation) {
         this();
-        this.gamePlayer = gamePlayer;
         this.turn = turn;
+        this.gamePlayer = gamePlayer;
         this.salvoLocation = salvoLocation;
     }
 
@@ -45,12 +45,12 @@ public class Salvo {
         return id;
     }
 
-    public GamePlayer getGamePlayer() {
-        return gamePlayer;
-    }
-
     public int getTurn() {
         return turn;
+    }
+
+    public GamePlayer getGamePlayer() {
+        return gamePlayer;
     }
 
     public List<String> getSalvoLocation() {
@@ -59,12 +59,12 @@ public class Salvo {
 
 
     // -- Setters -- //
-    public void setGamePlayer(GamePlayer gamePlayer) {
-        this.gamePlayer = gamePlayer;
-    }
-
     public void setTurn(int turn) {
         this.turn = turn;
+    }
+
+    public void setGamePlayer(GamePlayer gamePlayer) {
+        this.gamePlayer = gamePlayer;
     }
 
     public void setSalvoLocation(List<String> salvoLocation) {
