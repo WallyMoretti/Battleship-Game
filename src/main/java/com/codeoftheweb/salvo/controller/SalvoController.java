@@ -79,6 +79,10 @@ public class SalvoController {
         // Agrego a 'data' el DTO de Ship.
         data.put("ships", gamePlayerRepository.getOne(gamePlayerId).getShips().stream().map(ship -> ship.makeShipDTO()).collect(Collectors.toList()));
 
+        // Desde gamePlayerRepository, consigo un gamePlayer por ID. Desde ahi, entro a game, luego consigo los gamePlayers y para cada player, consigo sus salvoes.
+        // Luego, realizo otro map y para cada salvo, llamo al metodo DTO de la clase Salvo.
+        data.put("salvoes", gamePlayerRepository.getOne(gamePlayerId).getGame().getGamePlayers().stream().flatMap(player -> player.getSalvoes().stream().map(salvo -> salvo.makeSalvoDTO())).collect(Collectors.toList()));
+
         return data;
     }
 }
