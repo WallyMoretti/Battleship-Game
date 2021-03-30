@@ -1,9 +1,12 @@
 package com.codeoftheweb.salvo.models;
 
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Entity
 public class Score {
@@ -42,10 +45,12 @@ public class Score {
         return id;
     }
 
+    @JsonIgnore
     public Game getGame() {
         return game;
     }
 
+    @JsonIgnore
     public Player getPlayer() {
         return player;
     }
@@ -74,5 +79,17 @@ public class Score {
 
     public void setFinishDate(LocalDateTime finishDate) {
         this.finishDate = finishDate;
+    }
+
+
+    // -- Metodos -- //
+    public Map<String, Object> makeScoreDTO() {
+
+        Map<String, Object> dto = new LinkedHashMap<String, Object>();
+
+        dto.put("score", getScore());
+        dto.put("finishDate", getFinishDate());
+
+        return dto;
     }
 }
