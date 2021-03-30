@@ -1,11 +1,11 @@
 package com.codeoftheweb.salvo.models;
 
-import com.codeoftheweb.salvo.models.GamePlayer;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -65,7 +65,7 @@ public class Player {
         this.scores = scores;
     }
 
-    
+
     // -- Metodos -- //
     public void addGamePlayer(GamePlayer gamePlayer) {
         gamePlayer.setPlayer(this);
@@ -73,11 +73,16 @@ public class Player {
     }
 
     public Map<String, Object> makePlayerDTO() {
+
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
 
         dto.put("id", getId());
         dto.put("username", getUserName());
 
         return dto;
+    }
+
+    public Optional<Score> getScore(Game game) {
+        return scores.stream().filter(score -> score.getGame().equals(game)).findFirst();
     }
 }
