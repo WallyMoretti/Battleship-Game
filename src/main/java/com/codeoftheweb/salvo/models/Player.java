@@ -21,6 +21,9 @@ public class Player {
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     private Set<GamePlayer> gamePlayers;
 
+    @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
+    private Set<Score> scores;
+
 
     // -- Constructor -- //
     public Player() {
@@ -44,6 +47,10 @@ public class Player {
         return gamePlayers;
     }
 
+    public Set<Score> getScores() {
+        return scores;
+    }
+
 
     // -- Setters -- //
     public void setUserName(String userName) {
@@ -54,7 +61,11 @@ public class Player {
         this.gamePlayers = gamePlayers;
     }
 
+    public void setScores(Set<Score> scores) {
+        this.scores = scores;
+    }
 
+    
     // -- Metodos -- //
     public void addGamePlayer(GamePlayer gamePlayer) {
         gamePlayer.setPlayer(this);
