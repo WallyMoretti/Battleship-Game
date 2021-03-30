@@ -87,6 +87,7 @@ public class Score {
 
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
 
+        dto.put("player", player.getId());
         dto.put("score", getScore());
         dto.put("finishDate", getFinishDate());
 
