@@ -79,7 +79,7 @@ public class Salvo {
 
         dto.put("turn", getTurn());
         dto.put("player", getGamePlayer().getPlayer().getId());
-        dto.put("location", getSalvoLocation());
+        dto.put("locations", getSalvoLocation());
 
         return dto;
     }
