@@ -96,9 +96,6 @@ public class GamePlayer {
 
         dto.put("id", getId());
         dto.put("player", player.makePlayerDTO());
-        if (getScore().isPresent()) {
-            dto.put("score", getScore().stream().map(score -> score.makeScoreDTO()));
-        }
 
         return dto;
     }
