@@ -39,7 +39,7 @@ public class Game {
         return id;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
@@ -76,7 +76,7 @@ public class Game {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
 
         dto.put("id", getId());
-        dto.put("date", getDate());
+        dto.put("date", getCreationDate());
         dto.put("gamePlayer", getGamePlayers().stream().map(GamePlayer::makeGamePlayerDTO));
 
         return dto;
