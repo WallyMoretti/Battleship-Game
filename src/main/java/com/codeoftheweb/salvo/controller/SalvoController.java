@@ -43,8 +43,12 @@ public class SalvoController {
 
     // -- Metodos -- //
     @GetMapping("/games") // Lo mismo que @RequestMapping, pero solo a nivel método.
-    public List<Object> getGames() {
-        return gameRepository.findAll().stream().map(game -> game.makeGameDTO()).collect(Collectors.toList());
+    public Map<String, Object> getGames() {
+
+        Map<String, Object> aux = new LinkedHashMap<String, Object>();
+        aux.put("games", gameRepository.findAll().stream().map(game -> game.makeGameDTO()).collect(Collectors.toList()));
+
+        return aux;
     }
 
     @GetMapping("/gamePlayers") // Lo mismo que @RequestMapping, pero solo a nivel método.
