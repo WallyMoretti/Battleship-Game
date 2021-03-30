@@ -74,7 +74,7 @@ public class Ship {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
 
         dto.put("type", getType());
-        dto.put("location", getShipLocation());
+        dto.put("locations", getShipLocation());
 
         return dto;
     }
