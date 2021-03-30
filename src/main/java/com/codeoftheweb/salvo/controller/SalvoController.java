@@ -1,10 +1,9 @@
 package com.codeoftheweb.salvo.controller;
 
 import com.codeoftheweb.salvo.models.GamePlayer;
-import com.codeoftheweb.salvo.repository.GamePlayerRepository;
-import com.codeoftheweb.salvo.repository.GameRepository;
-import com.codeoftheweb.salvo.repository.PlayerRepository;
-import com.codeoftheweb.salvo.repository.ShipRepository;
+import com.codeoftheweb.salvo.models.Salvo;
+import com.codeoftheweb.salvo.models.Score;
+import com.codeoftheweb.salvo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +33,12 @@ public class SalvoController {
 
     @Autowired
     private ShipRepository shipRepository;
+
+    @Autowired
+    private SalvoRepository salvoRepository;
+
+    @Autowired
+    private ScoreRepository scoreRepository;
 
 
     // -- Metodos -- //
