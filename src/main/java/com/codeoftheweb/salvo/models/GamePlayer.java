@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -95,7 +96,14 @@ public class GamePlayer {
 
         dto.put("id", getId());
         dto.put("player", player.makePlayerDTO());
+        if (getScore().isPresent()) {
+            dto.put("score", getScore().stream().map(score -> score.makeScoreDTO()));
+        }
 
         return dto;
+    }
+
+    public Optional<Score> getScore() {
+        return player.getScore(this.game);
     }
 }
