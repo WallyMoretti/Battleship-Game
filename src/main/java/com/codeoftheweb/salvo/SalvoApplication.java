@@ -21,7 +21,7 @@ public class SalvoApplication {
     }
 
     @Bean // @Bean --> Permite encapsular el contenido, con la finalidad de otorgar una mejor estructura.
-    public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, SalvoRepository salvoRepository) {
+    public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, SalvoRepository salvoRepository, ScoreRepository scoreRepository) {
         return (args) -> {
 
 
@@ -30,6 +30,7 @@ public class SalvoApplication {
             Player player2 = playerRepository.save(new Player("c.obrian@ctu.gov"));
             Player player3 = playerRepository.save(new Player("kim_bauer@gmail.com"));
             Player player4 = playerRepository.save(new Player("t.almeida@ctu.gov"));
+
             /*Player player5 = playerRepository.save(new Player("d.palmer@gmail.com"));
             Player player6 = playerRepository.save(new Player("m.dessler@gmail.com"));*/
 
@@ -115,6 +116,20 @@ public class SalvoApplication {
             Salvo salvo10 = salvoRepository.save(new Salvo(1, gamePlayer6, Arrays.asList("H1", "H2", "H3")));
             Salvo salvo11 = salvoRepository.save(new Salvo(2, gamePlayer5, Arrays.asList("A2", "A3", "D8")));
             Salvo salvo12 = salvoRepository.save(new Salvo(2, gamePlayer6, Arrays.asList("E1", "F2", "G3")));
+
+
+            // -- Score -- //
+            // Game 1
+            Score score1 = scoreRepository.save(new Score(game1, player1, 1, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"))));
+            Score score2 = scoreRepository.save(new Score(game1, player2, 0, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"))));
+
+            // Game 2
+            Score score3 = scoreRepository.save(new Score(game2, player1, 0.5, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(1)));
+            Score score4 = scoreRepository.save(new Score(game2, player2, 0.5, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(1)));
+
+            // Game 3
+            Score score5 = scoreRepository.save(new Score(game3, player2, 1, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2)));
+            Score score6 = scoreRepository.save(new Score(game3, player4, 0, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2)));
         };
     }
 }
