@@ -5,8 +5,10 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class Game {
@@ -76,8 +78,10 @@ public class Game {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
 
         dto.put("id", getId());
-        dto.put("date", getCreationDate());
-        dto.put("gamePlayer", getGamePlayers().stream().map(GamePlayer::makeGamePlayerDTO));
+        dto.put("created", getCreationDate());
+        dto.put("gamePlayers", getGamePlayers().stream().map(GamePlayer::makeGamePlayerDTO));
+        List<Map<String, Object>> scores = gamePlayers.stream().map(gp -> gp.getScore()).filter(score -> score.isPresent()).map(score -> score.get().makeScoreDTO()).collect(Collectors.toList());
+        dto.put("scores", scores);
 
         return dto;
     }
