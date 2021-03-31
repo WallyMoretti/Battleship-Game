@@ -26,10 +26,10 @@ public class SalvoApplication {
 
 
             // -- Players -- //
-            Player player1 = playerRepository.save(new Player("j.bauer@ctu.gov"));
-            Player player2 = playerRepository.save(new Player("c.obrian@ctu.gov"));
-            Player player3 = playerRepository.save(new Player("kim_bauer@gmail.com"));
-            Player player4 = playerRepository.save(new Player("t.almeida@ctu.gov"));
+            Player player1 = playerRepository.save(new Player("j.bauer@ctu.gov", "24"));
+            Player player2 = playerRepository.save(new Player("c.obrian@ctu.gov", "42"));
+            Player player3 = playerRepository.save(new Player("kim_bauer@gmail.com", "kb"));
+            Player player4 = playerRepository.save(new Player("t.almeida@ctu.gov", "mole"));
 
             /*Player player5 = playerRepository.save(new Player("d.palmer@gmail.com"));
             Player player6 = playerRepository.save(new Player("m.dessler@gmail.com"));*/
