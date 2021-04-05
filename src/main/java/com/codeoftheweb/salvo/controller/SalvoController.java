@@ -1,21 +1,17 @@
 package com.codeoftheweb.salvo.controller;
 
 import com.codeoftheweb.salvo.models.GamePlayer;
-import com.codeoftheweb.salvo.models.Salvo;
-import com.codeoftheweb.salvo.models.Score;
+import com.codeoftheweb.salvo.models.Player;
 import com.codeoftheweb.salvo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController //  Controlador para construir una API Rest que reciba y envíe peticiones requeridas.
@@ -40,27 +36,69 @@ public class SalvoController {
     @Autowired
     private ScoreRepository scoreRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    // -- Metodos -- //
+    // -- games -- //
     @GetMapping("/games") // Lo mismo que @RequestMapping, pero solo a nivel método.
-    public Map<String, Object> getGames() {
+    public Map<String, Object> getGames(Authentication authentication) {
 
         Map<String, Object> aux = new LinkedHashMap<String, Object>();
         aux.put("games", gameRepository.findAll().stream().map(game -> game.makeGameDTO()).collect(Collectors.toList()));
+        aux.put("player", getMap(authentication));
 
         return aux;
     }
 
+    private Map<String, Object> getMap(Authentication authentication) {
+        if (!isGuest(authentication)) {
+            return playerRepository.findByUserName(authentication.getName()).makePlayerDTO();
+        } else {
+
+            return null;
+        }
+    }
+
+    private boolean isGuest(Authentication authentication) {
+        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
+    }
+
+
+    // -- gamePlayers -- //
     @GetMapping("/gamePlayers") // Lo mismo que @RequestMapping, pero solo a nivel método.
     public List<Object> getGamePlayers() {
         return gamePlayerRepository.findAll().stream().map(gamePlayer -> gamePlayer.makeGamePlayerDTO()).collect(Collectors.toList());
     }
 
+
+    // -- players -- //
     @GetMapping("/players")
     public List<Object> getPlayers() {
         return playerRepository.findAll().stream().map(player -> player.makePlayerDTO()).collect(Collectors.toList());
     }
 
+    @PostMapping("/players")
+    public ResponseEntity<Map<String, Object>> register(
+            @RequestParam String userName, @RequestParam String password) {
+        if (userName.isEmpty() || password.isEmpty()) {
+            return new ResponseEntity<>(makeMap("error", "Missing data"), HttpStatus.FORBIDDEN);
+        }
+        if (playerRepository.findByUserName(userName) != null) {
+            return new ResponseEntity<>(makeMap("error", "Missing data"), HttpStatus.FORBIDDEN);
+        }
+        playerRepository.save(new Player(userName, passwordEncoder.encode("password")));
+
+        return new ResponseEntity<>(makeMap("message", "success, player created"), HttpStatus.CREATED);
+    }
+
+    private Map<String, Object> makeMap(String key, Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        return map;
+    }
+
+
+    // -- game_view -- //
     @GetMapping("/game_view/{gamePlayerId}")
     public ResponseEntity<Map<String, Object>> findGamePlayer(@PathVariable Long gamePlayerId) {
 
@@ -78,6 +116,7 @@ public class SalvoController {
         }
         return response;
     }
+
 
     private Map<String, Object> getMapDTOs(Long gamePlayerId) { // Retorna un mapa con los DTOs de las clases.
 
