@@ -42,6 +42,7 @@ public class SalvoController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
     // -- games -- //
     @GetMapping("/games") // Lo mismo que @RequestMapping, pero solo a nivel método.
     public Map<String, Object> getGames(Authentication authentication) {
@@ -76,10 +77,38 @@ public class SalvoController {
             player = playerRepository.findByUserName(authentication.getName());
             gamePlayer = gamePlayerRepository.save(new GamePlayer(player, game));
 
-            response = new ResponseEntity<>(makeMap("gpid: ", gamePlayer.getId()), HttpStatus.CREATED);
+            response = new ResponseEntity<>(makeMap("gpid", gamePlayer.getId()), HttpStatus.CREATED);
         } else {
 
             response = new ResponseEntity<>(makeMap("error", "player not authorized"), HttpStatus.UNAUTHORIZED);
+        }
+
+        return response;
+    }
+
+
+    @PostMapping("/game/{gameId}/players")
+    public ResponseEntity<Map<String, Object>> joinGame(@PathVariable Long gameId, Authentication authentication) {
+
+        ResponseEntity<Map<String, Object>> response;
+        Optional<Game> game = gameRepository.findById(gameId);
+        Player player;
+        GamePlayer gamePlayer;
+
+        if (isGuest(authentication)) {
+
+            response = new ResponseEntity<>(makeMap("error", "player is unauthorized"), HttpStatus.UNAUTHORIZED);
+        } else if (!game.isPresent()) {
+
+            response = new ResponseEntity<>(makeMap("error", "there is no game"), HttpStatus.FORBIDDEN);
+        } else if (game.get().getGamePlayers().size() == 2) {
+
+            response = new ResponseEntity<>(makeMap("error", "game is full"), HttpStatus.FORBIDDEN);
+        } else {
+
+            player = playerRepository.findByUserName(authentication.getName());
+            gamePlayer = gamePlayerRepository.save(new GamePlayer(player, game.get()));
+            response = new ResponseEntity<>(makeMap("gpid", gamePlayer.getId()), HttpStatus.CREATED);
         }
 
         return response;
