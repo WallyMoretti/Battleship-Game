@@ -43,20 +43,16 @@ public class SalvoController {
     @GetMapping("/games") // Lo mismo que @RequestMapping, pero solo a nivel método.
     public Map<String, Object> getGames(Authentication authentication) {
 
-        Map<String, Object> aux = new LinkedHashMap<String, Object>();
-        aux.put("games", gameRepository.findAll().stream().map(game -> game.makeGameDTO()).collect(Collectors.toList()));
-        aux.put("player", getMap(authentication));
+        Map<String, Object> dto = new LinkedHashMap<String, Object>();
 
-        return aux;
-    }
-
-    private Map<String, Object> getMap(Authentication authentication) {
         if (!isGuest(authentication)) {
-            return playerRepository.findByUserName(authentication.getName()).makePlayerDTO();
+            dto.put("player", playerRepository.findByUserName(authentication.getName()).makePlayerDTO());
         } else {
-
-            return null;
+            dto.put("player", "Guest");
         }
+        dto.put("games", gameRepository.findAll().stream().map(game -> game.makeGameDTO()).collect(Collectors.toList()));
+
+        return dto;
     }
 
     private boolean isGuest(Authentication authentication) {
@@ -86,7 +82,7 @@ public class SalvoController {
         if (playerRepository.findByUserName(username) != null) {
             return new ResponseEntity<>(makeMap("error", "Missing data"), HttpStatus.FORBIDDEN);
         }
-        playerRepository.save(new Player(username, passwordEncoder.encode("password")));
+        playerRepository.save(new Player(username, passwordEncoder.encode(password)));
 
         return new ResponseEntity<>(makeMap("message", "success, player created"), HttpStatus.CREATED);
     }
