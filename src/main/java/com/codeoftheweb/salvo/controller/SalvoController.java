@@ -1,5 +1,6 @@
 package com.codeoftheweb.salvo.controller;
 
+import com.codeoftheweb.salvo.models.Game;
 import com.codeoftheweb.salvo.models.GamePlayer;
 import com.codeoftheweb.salvo.models.Player;
 import com.codeoftheweb.salvo.repository.*;
@@ -11,6 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,6 +62,29 @@ public class SalvoController {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
 
+    @PostMapping("/games")
+    public ResponseEntity<Map<String, Object>> createGame(Authentication authentication) {
+
+        ResponseEntity<Map<String, Object>> response;
+        Game game;
+        Player player;
+        GamePlayer gamePlayer;
+
+        if (!isGuest(authentication)) {
+
+            game = gameRepository.save(new Game(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"))));
+            player = playerRepository.findByUserName(authentication.getName());
+            gamePlayer = gamePlayerRepository.save(new GamePlayer(player, game));
+
+            response = new ResponseEntity<>(makeMap("gpid: ", gamePlayer.getId()), HttpStatus.CREATED);
+        } else {
+
+            response = new ResponseEntity<>(makeMap("error", "player not authorized"), HttpStatus.UNAUTHORIZED);
+        }
+
+        return response;
+    }
+
 
     // -- gamePlayers -- //
     @GetMapping("/gamePlayers") // Lo mismo que @RequestMapping, pero solo a nivel método.
@@ -96,17 +122,25 @@ public class SalvoController {
 
     // -- game_view -- //
     @GetMapping("/game_view/{gamePlayerId}")
-    public ResponseEntity<Map<String, Object>> findGamePlayer(@PathVariable Long gamePlayerId) {
+    public ResponseEntity<Map<String, Object>> findGamePlayer(@PathVariable Long gamePlayerId, Authentication authentication) {
 
         Optional<GamePlayer> gp = gamePlayerRepository.findById(gamePlayerId);
         ResponseEntity<Map<String, Object>> response;
+        Map<String, Object> aux = new LinkedHashMap<String, Object>();
 
         if (gp.isPresent()) { // Si no es null, realizo un llamado al metodo "getMapDTOs" que devuelve un mapa con los DTO.
 
-            response = new ResponseEntity<>(getMapDTOs(gamePlayerId), HttpStatus.OK);
+            if (authentication.getName().compareTo(gp.get().getPlayer().getUserName()) == 0) {
+
+                response = new ResponseEntity<>(getMapDTOs(gamePlayerId), HttpStatus.OK);
+            } else {
+
+                aux.put("Problem", "player not authorized");
+                response = new ResponseEntity<>(aux, HttpStatus.UNAUTHORIZED);
+            }
+
         } else {
 
-            Map<String, Object> aux = new LinkedHashMap<String, Object>();
             aux.put("Problem", "gamePlayer does not exist");
             response = new ResponseEntity<>(aux, HttpStatus.UNAUTHORIZED);
         }
