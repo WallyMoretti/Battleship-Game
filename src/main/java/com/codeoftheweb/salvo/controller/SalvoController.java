@@ -1,19 +1,14 @@
 package com.codeoftheweb.salvo.controller;
 
-import com.codeoftheweb.salvo.models.Game;
 import com.codeoftheweb.salvo.models.GamePlayer;
-import com.codeoftheweb.salvo.models.Player;
 import com.codeoftheweb.salvo.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,109 +38,10 @@ public class SalvoController {
     private PasswordEncoder passwordEncoder;
 
 
-    // -- games -- //
-    @GetMapping("/games") // Lo mismo que @RequestMapping, pero solo a nivel método.
-    public Map<String, Object> getGames(Authentication authentication) {
-
-        Map<String, Object> dto = new LinkedHashMap<String, Object>();
-
-        if (!isGuest(authentication)) {
-            dto.put("player", playerRepository.findByUserName(authentication.getName()).makePlayerDTO());
-        } else {
-            dto.put("player", "Guest");
-        }
-        dto.put("games", gameRepository.findAll().stream().map(game -> game.makeGameDTO()).collect(Collectors.toList()));
-
-        return dto;
-    }
-
-    private boolean isGuest(Authentication authentication) {
-        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
-    }
-
-    @PostMapping("/games")
-    public ResponseEntity<Map<String, Object>> createGame(Authentication authentication) {
-
-        ResponseEntity<Map<String, Object>> response;
-        Game game;
-        Player player;
-        GamePlayer gamePlayer;
-
-        if (!isGuest(authentication)) {
-
-            game = gameRepository.save(new Game(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"))));
-            player = playerRepository.findByUserName(authentication.getName());
-            gamePlayer = gamePlayerRepository.save(new GamePlayer(player, game));
-
-            response = new ResponseEntity<>(makeMap("gpid", gamePlayer.getId()), HttpStatus.CREATED);
-        } else {
-
-            response = new ResponseEntity<>(makeMap("error", "player not authorized"), HttpStatus.UNAUTHORIZED);
-        }
-
-        return response;
-    }
-
-
-    @PostMapping("/game/{gameId}/players")
-    public ResponseEntity<Map<String, Object>> joinGame(@PathVariable Long gameId, Authentication authentication) {
-
-        ResponseEntity<Map<String, Object>> response;
-        Optional<Game> game = gameRepository.findById(gameId);
-        Player player;
-        GamePlayer gamePlayer;
-
-        if (isGuest(authentication)) {
-
-            response = new ResponseEntity<>(makeMap("error", "player is unauthorized"), HttpStatus.UNAUTHORIZED);
-        } else if (!game.isPresent()) {
-
-            response = new ResponseEntity<>(makeMap("error", "there is no game"), HttpStatus.FORBIDDEN);
-        } else if (game.get().getGamePlayers().size() == 2) {
-
-            response = new ResponseEntity<>(makeMap("error", "game is full"), HttpStatus.FORBIDDEN);
-        } else {
-
-            player = playerRepository.findByUserName(authentication.getName());
-            gamePlayer = gamePlayerRepository.save(new GamePlayer(player, game.get()));
-            response = new ResponseEntity<>(makeMap("gpid", gamePlayer.getId()), HttpStatus.CREATED);
-        }
-
-        return response;
-    }
-
-
     // -- gamePlayers -- //
     @GetMapping("/gamePlayers") // Lo mismo que @RequestMapping, pero solo a nivel método.
     public List<Object> getGamePlayers() {
         return gamePlayerRepository.findAll().stream().map(gamePlayer -> gamePlayer.makeGamePlayerDTO()).collect(Collectors.toList());
-    }
-
-
-    // -- players -- //
-    @GetMapping("/players")
-    public List<Object> getPlayers() {
-        return playerRepository.findAll().stream().map(player -> player.makePlayerDTO()).collect(Collectors.toList());
-    }
-
-    @PostMapping("/players")
-    public ResponseEntity<Map<String, Object>> register(
-            @RequestParam String username, @RequestParam String password) {
-        if (username.isEmpty() || password.isEmpty()) {
-            return new ResponseEntity<>(makeMap("error", "Missing data"), HttpStatus.FORBIDDEN);
-        }
-        if (playerRepository.findByUserName(username) != null) {
-            return new ResponseEntity<>(makeMap("error", "Missing data"), HttpStatus.FORBIDDEN);
-        }
-        playerRepository.save(new Player(username, passwordEncoder.encode(password)));
-
-        return new ResponseEntity<>(makeMap("message", "success, player created"), HttpStatus.CREATED);
-    }
-
-    private Map<String, Object> makeMap(String key, Object value) {
-        Map<String, Object> map = new HashMap<>();
-        map.put(key, value);
-        return map;
     }
 
 
