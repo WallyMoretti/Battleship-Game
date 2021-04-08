@@ -1,7 +1,17 @@
 package com.codeoftheweb.salvo.enums;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public enum ShipType {
 
-    // Carrier (5) -- Battleship (4) -- Submarine (3) -- Destroyer (3) -- Patrol Boat (2)
-    CARRIER, BATTLESHIP, SUBMARINE, DESTROYER, PATROL_BOAT;
+    @JsonProperty("carrier") // Carrier (5)
+    CARRIER,
+    @JsonProperty("battleship") // Battleship (4)
+    BATTLESHIP,
+    @JsonProperty("submarine") // Submarine (3)
+    SUBMARINE,
+    @JsonProperty("destroyer") // Destroyer (3)
+    DESTROYER,
+    @JsonProperty("patrol boat") // Patrol Boat (2)
+    PATROL_BOAT
 }
