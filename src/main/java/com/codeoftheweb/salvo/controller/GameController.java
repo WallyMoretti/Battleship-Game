@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class GameController {
 
-    @Autowired // Permite inyectar unas dependencias con otras dentro.
+    @Autowired
     private GameRepository gameRepository;
 
     @Autowired
