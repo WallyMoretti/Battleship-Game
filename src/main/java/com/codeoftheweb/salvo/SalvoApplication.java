@@ -92,8 +92,8 @@ public class SalvoApplication extends SpringBootServletInitializer {
             GamePlayer gamePlayer12 = gamePlayerRepository.save(new GamePlayer(player4, game7)); // t.almeida vs ______
 
             // Game 8
-            GamePlayer gamePlayer15 = gamePlayerRepository.save(new GamePlayer(player3, game8)); // kim_bauer vs _________
-            GamePlayer gamePlayer16 = gamePlayerRepository.save(new GamePlayer(player4, game8)); // _________ vs t.almeida
+            GamePlayer gamePlayer13 = gamePlayerRepository.save(new GamePlayer(player3, game8)); // kim_bauer vs _________
+            GamePlayer gamePlayer14 = gamePlayerRepository.save(new GamePlayer(player4, game8)); // _________ vs t.almeida
 
 
             // -- Ship -- //
