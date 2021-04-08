@@ -1,7 +1,11 @@
 package com.codeoftheweb.salvo.controller;
 
 import com.codeoftheweb.salvo.models.GamePlayer;
+import com.codeoftheweb.salvo.models.Player;
+import com.codeoftheweb.salvo.models.Ship;
 import com.codeoftheweb.salvo.repository.*;
+import com.codeoftheweb.salvo.utils.Utils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +21,9 @@ public class SalvoController {
 
     @Autowired // Permite inyectar unas dependencias con otras dentro.
     private GamePlayerRepository gamePlayerRepository;
+
+    @Autowired
+    private PlayerRepository playerRepository;
 
 
     // -- gamePlayers -- //
@@ -53,7 +60,48 @@ public class SalvoController {
         return response;
     }
 
+    @GetMapping("/games/players/{gamePlayerId}/ships")
+    public Map<String, Object> getShip(@PathVariable Long gamePlayerId) {
+        return Utils.makeMap("ships", gamePlayerRepository.getOne(gamePlayerId).getShips().stream().map(ship -> ship.makeShipDTO()).collect(Collectors.toList()));
+    }
 
+    @PostMapping("/games/players/{gamePlayerId}/ships")
+    public ResponseEntity<Map<String, Object>> placeShips(@PathVariable Long gamePlayerId, @RequestBody Set<Ship> ships, Authentication authentication) {
+
+        ResponseEntity<Map<String, Object>> response;
+        Optional<GamePlayer> gp = gamePlayerRepository.findById(gamePlayerId);
+        Player currentPlayer = playerRepository.findByUserName(authentication.getName());
+
+        if (Utils.isGuest(authentication)) {
+
+            response = new ResponseEntity<>(Utils.makeMap("error", "no player logged in"), HttpStatus.UNAUTHORIZED);
+        } else if (!gp.isPresent()) {
+
+            response = new ResponseEntity<>(Utils.makeMap("error", "Game Player ID doesn't exist"), HttpStatus.UNAUTHORIZED);
+        } else if (gp.get().getPlayer().getId() != currentPlayer.getId()) {
+
+            response = new ResponseEntity<>(Utils.makeMap("error", "the current user is not the game player the ID references"), HttpStatus.UNAUTHORIZED);
+        } else if (gp.get().getShips().size() > 0) {
+
+            response = new ResponseEntity<>(Utils.makeMap("error", "user already has ships placed"), HttpStatus.FORBIDDEN);
+        } else {
+
+            if (ships.size() > 0) {
+
+                gp.get().addShips(ships);
+                gamePlayerRepository.save(gp.get());
+
+                response = new ResponseEntity<>(Utils.makeMap("message", "success"), HttpStatus.ACCEPTED);
+            } else {
+
+                response = new ResponseEntity<>(Utils.makeMap("error", "you don't send any ship"), HttpStatus.FORBIDDEN);
+            }
+        }
+
+        return response;
+    }
+
+    // -- DTO -- //
     private Map<String, Object> getMapDTOs(Long gamePlayerId) { // Retorna un mapa con los DTOs de las clases.
 
         // Creo un Mapa donde agrego los DTO, accediendo desde gamePlayerRepository.
