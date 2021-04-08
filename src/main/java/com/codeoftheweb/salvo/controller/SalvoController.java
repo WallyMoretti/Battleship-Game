@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -17,25 +16,7 @@ import java.util.stream.Collectors;
 public class SalvoController {
 
     @Autowired // Permite inyectar unas dependencias con otras dentro.
-    private GameRepository gameRepository;
-
-    @Autowired
     private GamePlayerRepository gamePlayerRepository;
-
-    @Autowired
-    private PlayerRepository playerRepository;
-
-    @Autowired
-    private ShipRepository shipRepository;
-
-    @Autowired
-    private SalvoRepository salvoRepository;
-
-    @Autowired
-    private ScoreRepository scoreRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
 
     // -- gamePlayers -- //
