@@ -2,6 +2,7 @@ package com.codeoftheweb.salvo.controller;
 
 import com.codeoftheweb.salvo.models.Player;
 import com.codeoftheweb.salvo.repository.PlayerRepository;
+import com.codeoftheweb.salvo.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,20 +36,14 @@ public class PlayerController {
 
         if (username.isEmpty() || password.isEmpty()) {
 
-            return new ResponseEntity<>(makeMap("error", "Missing data"), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(Utils.makeMap("error", "Missing data"), HttpStatus.FORBIDDEN);
         }
         if (playerRepository.findByUserName(username) != null) {
 
-            return new ResponseEntity<>(makeMap("error", "Missing data"), HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(Utils.makeMap("error", "Missing data"), HttpStatus.FORBIDDEN);
         }
 
         playerRepository.save(new Player(username, passwordEncoder.encode(password)));
-        return new ResponseEntity<>(makeMap("message", "success, player created"), HttpStatus.CREATED);
-    }
-
-    private Map<String, Object> makeMap(String key, Object value) {
-        Map<String, Object> map = new HashMap<>();
-        map.put(key, value);
-        return map;
+        return new ResponseEntity<>(Utils.makeMap("message", "success, player created"), HttpStatus.CREATED);
     }
 }
