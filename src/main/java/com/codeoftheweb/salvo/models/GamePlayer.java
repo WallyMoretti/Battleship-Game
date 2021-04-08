@@ -89,8 +89,23 @@ public class GamePlayer {
         this.joinDate = joinDate;
     }
 
+    public void setShips(Set<Ship> ships) {
+        this.ships = ships;
+    }
+
+    public void setSalvoes(Set<Salvo> salvoes) {
+        this.salvoes = salvoes;
+    }
+
 
     // -- Metodos -- //
+    public void addShips(Set<Ship> ships) {
+        ships.forEach(ship -> {
+            ship.setGamePlayer(this);
+            this.ships.add(ship);
+        });
+    }
+
     public Map<String, Object> makeGamePlayerDTO() {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
 
