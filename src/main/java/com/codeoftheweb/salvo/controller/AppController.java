@@ -2,10 +2,9 @@ package com.codeoftheweb.salvo.controller;
 
 import com.codeoftheweb.salvo.models.GamePlayer;
 import com.codeoftheweb.salvo.models.Player;
-import com.codeoftheweb.salvo.models.Ship;
 import com.codeoftheweb.salvo.repository.*;
-import com.codeoftheweb.salvo.utils.Utils;
 
+import com.codeoftheweb.salvo.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
 
 @RestController //  Controlador para construir una API Rest que reciba y envíe peticiones requeridas.
 @RequestMapping("/api") // Se encarga de relacionar una clase o método con una petición http.
-public class SalvoController {
+public class AppController {
 
     @Autowired // Permite inyectar unas dependencias con otras dentro.
     private GamePlayerRepository gamePlayerRepository;
@@ -60,46 +59,45 @@ public class SalvoController {
         return response;
     }
 
-    @GetMapping("/games/players/{gamePlayerId}/ships")
-    public Map<String, Object> getShip(@PathVariable Long gamePlayerId) {
-        return Utils.makeMap("ships", gamePlayerRepository.getOne(gamePlayerId).getShips().stream().map(ship -> ship.makeShipDTO()).collect(Collectors.toList()));
-    }
-
-    @PostMapping("/games/players/{gamePlayerId}/ships")
-    public ResponseEntity<Map<String, Object>> placeShips(@PathVariable Long gamePlayerId, @RequestBody Set<Ship> ships, Authentication authentication) {
+    @PostMapping("/game_view/{gamePlayerId}")
+    public ResponseEntity<Map<String, Object>> getGameViewByGamePlayerId(@PathVariable Long gamePlayerId, Authentication authentication) {
 
         ResponseEntity<Map<String, Object>> response;
-        Optional<GamePlayer> gp = gamePlayerRepository.findById(gamePlayerId);
-        Player currentPlayer = playerRepository.findByUserName(authentication.getName());
+        Player player = playerRepository.findByUserName(authentication.getName());
+        GamePlayer gamePlayer = gamePlayerRepository.getOne(gamePlayerId);
 
         if (Utils.isGuest(authentication)) {
 
-            response = new ResponseEntity<>(Utils.makeMap("error", "no player logged in"), HttpStatus.UNAUTHORIZED);
-        } else if (!gp.isPresent()) {
+            response = new ResponseEntity<>(Utils.makeMap("error", "user not authorized"), HttpStatus.UNAUTHORIZED);
+        } else if (gamePlayer == null) {
 
             response = new ResponseEntity<>(Utils.makeMap("error", "Game Player ID doesn't exist"), HttpStatus.UNAUTHORIZED);
-        } else if (gp.get().getPlayer().getId() != currentPlayer.getId()) {
+        } else if (gamePlayer.getPlayer().getId() != player.getId()) {
 
             response = new ResponseEntity<>(Utils.makeMap("error", "the current user is not the game player the ID references"), HttpStatus.UNAUTHORIZED);
-        } else if (gp.get().getShips().size() > 0) {
-
-            response = new ResponseEntity<>(Utils.makeMap("error", "user already has ships placed"), HttpStatus.FORBIDDEN);
         } else {
 
-            if (ships.size() > 0) {
+            Map<String, Object> dto = new LinkedHashMap<>();
+            Map<String, Object> hits = new LinkedHashMap<>();
 
-                gp.get().addShips(ships);
-                gamePlayerRepository.save(gp.get());
+            dto.put("id", gamePlayer.getGame().getId());
+            dto.put("created", gamePlayer.getGame().getCreationDate());
+            dto.put("gameState", "PLACESHIPS");
+            dto.put("gamePlayers", gamePlayer.getGame().getGamePlayers().stream().map(gp -> gp.makeGamePlayerDTO()).collect(Collectors.toList()));
+            dto.put("ships", gamePlayer.getShips().stream().map(ship -> ship.makeShipDTO()).collect(Collectors.toList()));
+            dto.put("salvoes", gamePlayerRepository.getOne(gamePlayerId).getGame().getGamePlayers().stream().flatMap(player1 -> player1.getSalvoes().stream().map(salvo -> salvo.makeSalvoDTO())).collect(Collectors.toList()));
 
-                response = new ResponseEntity<>(Utils.makeMap("message", "success"), HttpStatus.ACCEPTED);
-            } else {
+            hits.put("self", new ArrayList<>());
+            hits.put("opponent", new ArrayList<>());
 
-                response = new ResponseEntity<>(Utils.makeMap("error", "you don't send any ship"), HttpStatus.FORBIDDEN);
-            }
+            dto.put("hits", hits);
+
+            response = null;
         }
 
         return response;
     }
+
 
     // -- DTO -- //
     private Map<String, Object> getMapDTOs(Long gamePlayerId) { // Retorna un mapa con los DTOs de las clases.
