@@ -12,6 +12,6 @@ public enum ShipType {
     SUBMARINE,
     @JsonProperty("destroyer") // Destroyer (3)
     DESTROYER,
-    @JsonProperty("patrol boat") // Patrol Boat (2)
+    @JsonProperty("patrolboat") // Patrol Boat (2)
     PATROL_BOAT
 }
