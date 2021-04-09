@@ -25,19 +25,19 @@ public class Ship {
 
     @ElementCollection
     @Column(name = "location")
-    private List<String> shipLocation;
+    private List<String> locations;
 
 
     // -- Constructores -- //
     public Ship() {
-        shipLocation = new ArrayList<>();
+        locations = new ArrayList<>();
     }
 
-    public Ship(ShipType type, GamePlayer gamePlayer, List<String> shipLocation) {
+    public Ship(ShipType type, GamePlayer gamePlayer, List<String> locations) {
         this();
         this.type = type;
         this.gamePlayer = gamePlayer;
-        this.shipLocation = shipLocation;
+        this.locations = locations;
     }
 
 
@@ -54,8 +54,8 @@ public class Ship {
         return gamePlayer;
     }
 
-    public List<String> getShipLocation() {
-        return shipLocation;
+    public List<String> getLocations() {
+        return locations;
     }
 
 
@@ -74,7 +74,7 @@ public class Ship {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
 
         dto.put("type", getType());
-        dto.put("locations", getShipLocation());
+        dto.put("locations", getLocations());
 
         return dto;
     }
