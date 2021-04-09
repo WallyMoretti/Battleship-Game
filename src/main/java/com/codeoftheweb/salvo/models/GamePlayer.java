@@ -106,6 +106,25 @@ public class GamePlayer {
         });
     }
 
+    public void addSalvo(Salvo salvo) {
+
+        salvo.setGamePlayer(this);
+        this.salvoes.add(salvo);
+    }
+
+    public boolean hasSalvo(Salvo salvo) {
+
+        for (Salvo salvo1 : salvoes) {
+
+            if (salvo1.getTurn() == salvo.getTurn()) {
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     public Map<String, Object> makeGamePlayerDTO() {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
 
