@@ -59,45 +59,6 @@ public class AppController {
         return response;
     }
 
-    @PostMapping("/game_view/{gamePlayerId}")
-    public ResponseEntity<Map<String, Object>> getGameViewByGamePlayerId(@PathVariable Long gamePlayerId, Authentication authentication) {
-
-        ResponseEntity<Map<String, Object>> response;
-        Player player = playerRepository.findByUserName(authentication.getName());
-        GamePlayer gamePlayer = gamePlayerRepository.getOne(gamePlayerId);
-
-        if (Utils.isGuest(authentication)) {
-
-            response = new ResponseEntity<>(Utils.makeMap("error", "user not authorized"), HttpStatus.UNAUTHORIZED);
-        } else if (gamePlayer == null) {
-
-            response = new ResponseEntity<>(Utils.makeMap("error", "Game Player ID doesn't exist"), HttpStatus.UNAUTHORIZED);
-        } else if (gamePlayer.getPlayer().getId() != player.getId()) {
-
-            response = new ResponseEntity<>(Utils.makeMap("error", "the current user is not the game player the ID references"), HttpStatus.UNAUTHORIZED);
-        } else {
-
-            Map<String, Object> dto = new LinkedHashMap<>();
-            Map<String, Object> hits = new LinkedHashMap<>();
-
-            dto.put("id", gamePlayer.getGame().getId());
-            dto.put("created", gamePlayer.getGame().getCreationDate());
-            dto.put("gameState", "PLACESHIPS");
-            dto.put("gamePlayers", gamePlayer.getGame().getGamePlayers().stream().map(gp -> gp.makeGamePlayerDTO()).collect(Collectors.toList()));
-            dto.put("ships", gamePlayer.getShips().stream().map(ship -> ship.makeShipDTO()).collect(Collectors.toList()));
-            dto.put("salvoes", gamePlayerRepository.getOne(gamePlayerId).getGame().getGamePlayers().stream().flatMap(player1 -> player1.getSalvoes().stream().map(salvo -> salvo.makeSalvoDTO())).collect(Collectors.toList()));
-
-            hits.put("self", new ArrayList<>());
-            hits.put("opponent", new ArrayList<>());
-
-            dto.put("hits", hits);
-
-            response = null;
-        }
-
-        return response;
-    }
-
 
     // -- DTO -- //
     private Map<String, Object> getMapDTOs(Long gamePlayerId) { // Retorna un mapa con los DTOs de las clases.
@@ -105,6 +66,9 @@ public class AppController {
         // Creo un Mapa donde agrego los DTO, accediendo desde gamePlayerRepository.
         // Accedo a la clase Game, que posee 'makeGameDTO' donde este tiene anidados los DTO de GamePlayer y Player respectivamente.
         Map<String, Object> data = gamePlayerRepository.getOne(gamePlayerId).getGame().makeGameDTO();
+        Map<String, Object> hits = new LinkedHashMap<>();
+
+        data.put("gameState", "PLACESHIPS");
 
         // Agrego a 'data' el DTO de Ship.
         data.put("ships", gamePlayerRepository.getOne(gamePlayerId).getShips().stream().map(ship -> ship.makeShipDTO()).collect(Collectors.toList()));
@@ -112,6 +76,10 @@ public class AppController {
         // Desde gamePlayerRepository, consigo un gamePlayer por ID. Desde ahi, entro a game, luego consigo los gamePlayers y para cada player, consigo sus salvoes.
         // Luego, realizo otro map y para cada salvo, llamo al metodo DTO de la clase Salvo.
         data.put("salvoes", gamePlayerRepository.getOne(gamePlayerId).getGame().getGamePlayers().stream().flatMap(player -> player.getSalvoes().stream().map(salvo -> salvo.makeSalvoDTO())).collect(Collectors.toList()));
+
+        hits.put("self", new ArrayList<>());
+        hits.put("opponent", new ArrayList<>());
+        data.put("hits", hits);
 
         return data;
     }
