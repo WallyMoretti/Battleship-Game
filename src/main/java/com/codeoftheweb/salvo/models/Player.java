@@ -89,7 +89,6 @@ public class Player {
 
         dto.put("id", getId());
         dto.put("email", getUserName());
-        dto.put("password", getPassword());
 
         return dto;
     }
