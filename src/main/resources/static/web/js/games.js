@@ -42,7 +42,7 @@ $('#login-form').on('submit', function (event) {
 
     } else if (submitButton == "signup") {
         $.post("/api/players",
-            { email: $("#username").val(),
+            { username: $("#username").val(),
                 password: $("#password").val() })
             .done(function(data) {
                 console.log("signup ok");
