@@ -45,23 +45,34 @@ public class SalvoController {
         if (Utils.isGuest(authentication)) {
 
             response = new ResponseEntity<>(Utils.makeMap("error", "no player logged in"), HttpStatus.UNAUTHORIZED);
-        } else if (!gp.isPresent()) {
+        } else if (gp.isEmpty()) {
 
-            response = new ResponseEntity<>(Utils.makeMap("error", "Game Player ID doesn't exist"), HttpStatus.UNAUTHORIZED);
+            response = new ResponseEntity<>(Utils.makeMap("error", "Game Player not found"), HttpStatus.UNAUTHORIZED);
         } else if (gp.get().getPlayer().getId() != currentPlayer.getId()) {
 
             response = new ResponseEntity<>(Utils.makeMap("error", "the current user is not the game player the ID references"), HttpStatus.UNAUTHORIZED);
         } else {
 
-            if (!gp.get().hasSalvo(salvo)) {
+            // Busco al gp enemigo.
+            Optional<GamePlayer> opponent = gp.get().getGame().getGamePlayers().stream().filter(gamePlayer -> gamePlayer.getId() != gp.get().getId()).findFirst();
 
-                gp.get().addSalvo(salvo);
-                gamePlayerRepository.save(gp.get());
-                response = new ResponseEntity<>(Utils.makeMap("OK", "success"), HttpStatus.CREATED);
+            if (opponent.isPresent()) {
+
+                if (gp.get().getSalvoes().size() <= opponent.get().getSalvoes().size()) {
+
+                    salvo.setTurn(gp.get().getSalvoes().size() + 1);
+                    gp.get().addSalvo(salvo);
+                    gamePlayerRepository.save(gp.get());
+                    response = new ResponseEntity<>(Utils.makeMap("OK", "success"), HttpStatus.CREATED);
+                } else {
+
+                    response = new ResponseEntity<>(Utils.makeMap("error", "it is not your turn"), HttpStatus.FORBIDDEN);
+                }
             } else {
 
-                response = new ResponseEntity<>(Utils.makeMap("error", "player already has salvo in this turn"), HttpStatus.FORBIDDEN);
+                response = new ResponseEntity<>(Utils.makeMap("error", "the is no opponent"), HttpStatus.FORBIDDEN);
             }
+
         }
 
         return response;
