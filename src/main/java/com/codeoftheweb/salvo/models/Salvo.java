@@ -53,7 +53,7 @@ public class Salvo {
         return gamePlayer;
     }
 
-    public List<String> getLocations() {
+    public List<String> getSalvoLocations() {
         return locations;
     }
 
@@ -67,7 +67,7 @@ public class Salvo {
         this.gamePlayer = gamePlayer;
     }
 
-    public void setLocations(List<String> locations) {
+    public void setSalvoLocations(List<String> locations) {
         this.locations = locations;
     }
 
@@ -79,7 +79,7 @@ public class Salvo {
 
         dto.put("turn", getTurn());
         dto.put("player", getGamePlayer().getPlayer().getId());
-        dto.put("locations", getLocations());
+        dto.put("locations", getSalvoLocations());
 
         return dto;
     }
