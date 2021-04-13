@@ -4,10 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -72,6 +69,10 @@ public class Game {
     public void addGamePlayer(GamePlayer gamePlayer) {
         gamePlayer.setGame(this);
         gamePlayers.add(gamePlayer);
+    }
+
+    public Optional<GamePlayer> findOpponent(GamePlayer gamePlayer) {
+        return getGamePlayers().stream().filter(gamePlayer2 -> gamePlayer.getId() != gamePlayer2.getId()).findFirst();
     }
 
     public Map<String, Object> makeGameDTO() {
