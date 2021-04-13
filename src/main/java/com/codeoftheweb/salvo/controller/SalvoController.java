@@ -1,6 +1,5 @@
 package com.codeoftheweb.salvo.controller;
 
-
 import com.codeoftheweb.salvo.models.GamePlayer;
 import com.codeoftheweb.salvo.models.Player;
 import com.codeoftheweb.salvo.models.Salvo;
