@@ -3,6 +3,7 @@ package com.codeoftheweb.salvo.controller;
 import com.codeoftheweb.salvo.enums.ShipType;
 import com.codeoftheweb.salvo.models.GamePlayer;
 import com.codeoftheweb.salvo.models.Salvo;
+import com.codeoftheweb.salvo.models.Score;
 import com.codeoftheweb.salvo.models.Ship;
 import com.codeoftheweb.salvo.repository.*;
 
@@ -12,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,6 +27,9 @@ public class AppController {
 
     @Autowired
     private PlayerRepository playerRepository;
+
+    @Autowired
+    private ScoreRepository scoreRepository;
 
 
     // -- gamePlayers -- //
@@ -60,16 +66,16 @@ public class AppController {
         return response;
     }
 
-    private List<Map<String, Object>> hitsAndSinks(GamePlayer self, GamePlayer opponent) {
+    private List<Map<String, Object>> hitsAndSunks(GamePlayer self, GamePlayer opponent) {
 
         List<Map<String, Object>> dtoSupremo = new LinkedList<>();
         int[] totalDamages = new int[5];
 
+        List<String> carrierLocationLocation = findShipLocations(self, ShipType.CARRIER);
         List<String> patrolBoatLocation = findShipLocations(self, ShipType.PATROL_BOAT);
         List<String> destroyerLocation = findShipLocations(self, ShipType.DESTROYER);
         List<String> submarineLocation = findShipLocations(self, ShipType.SUBMARINE);
         List<String> battleShipLocation = findShipLocations(self, ShipType.BATTLESHIP);
-        List<String> carrierLocationLocation = findShipLocations(self, ShipType.CARRIER);
 
         for (Salvo salvo : opponent.getSalvoes()) {
             Map<String, Object> dtoHit = new LinkedHashMap<>();
@@ -118,10 +124,11 @@ public class AppController {
             }
 
             damage.put("carrierHits", hits[0]);
-            damage.put("battleShipHits", hits[1]);
+            damage.put("battleshipHits", hits[1]);
             damage.put("destroyerHits", hits[2]);
             damage.put("submarineHits", hits[3]);
             damage.put("patrolboatHits", hits[4]);
+
             damage.put("carrier", totalDamages[0]);
             damage.put("battleship", totalDamages[1]);
             damage.put("destroyer", totalDamages[2]);
@@ -150,34 +157,103 @@ public class AppController {
         }
     }
 
+    public String getState(GamePlayer self) {
+
+        GamePlayer gamePlayer = self;
+        Optional<GamePlayer> opponent = gamePlayer.getGame().findOpponent(gamePlayer);
+
+        if (self.getShips().size() == 0) {
+            return "PLACESHIPS";
+        }
+        if (opponent.isEmpty()) {
+
+            return "WAITINGFOROPP";
+        }
+        if (opponent.get().getShips().isEmpty()) {
+
+            return "WAIT";
+        }
+        if (self.getSalvoes().size() < opponent.get().getSalvoes().size()) {
+
+            return "PLAY";
+        }
+
+        if (self.getSalvoes().size() > opponent.get().getSalvoes().size()) {
+
+            return "WAIT";
+        }
+        if (self.getSalvoes().size() == opponent.get().getSalvoes().size()) {
+
+            boolean selfLost = getIfAllSunk(self, opponent.get());
+            boolean opponentLost = getIfAllSunk(opponent.get(), self);
+
+
+            if (selfLost && opponentLost) {
+
+                if (self.getGame().getScores().size() == 0) {
+
+                    scoreRepository.save(new Score(self.getGame(), self.getPlayer(), 0.5, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"))));
+                    scoreRepository.save(new Score(opponent.get().getGame(), opponent.get().getPlayer(), 0.5, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"))));
+                }
+
+                return "TIE";
+            }
+            if (opponentLost) {
+
+                if (self.getGame().getScores().size() == 0) {
+
+                    scoreRepository.save(new Score(self.getGame(), self.getPlayer(), 1.0, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"))));
+                    scoreRepository.save(new Score(opponent.get().getGame(), opponent.get().getPlayer(), 0.0, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"))));
+                }
+
+                return "WON";
+            }
+            if (selfLost) {
+
+                if (self.getGame().getScores().size() == 0) {
+
+                    scoreRepository.save(new Score(self.getGame(), self.getPlayer(), 0.0, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"))));
+                    scoreRepository.save(new Score(opponent.get().getGame(), opponent.get().getPlayer(), 1.0, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"))));
+                }
+
+                return "LOST";
+            }
+            return "PLAY";
+        }
+        return "WAIT";
+    }
+
+    private boolean getIfAllSunk(GamePlayer self, GamePlayer opponent) {
+
+        if (!opponent.getShips().isEmpty() && !self.getSalvoes().isEmpty()) {
+            return opponent.getSalvoes().stream().flatMap(salvo -> salvo.getSalvoLocations().stream()).collect(Collectors.toList())
+                    .containsAll(self.getShips().stream().flatMap(ship -> ship.getLocations().stream()).collect(Collectors.toList()));
+        }
+        return false;
+    }
+
     private Map<String, Object> getMapDTOs(Long gamePlayerId) { // Retorna un mapa con los DTOs de las clases.
 
-        // Creo un Mapa donde agrego los DTO, accediendo desde gamePlayerRepository.
-        // Accedo a la clase Game, que posee 'makeGameDTO' donde este tiene anidados los DTO de GamePlayer y Player respectivamente.
-        Map<String, Object> data = gamePlayerRepository.getOne(gamePlayerId).getGame().makeGameDTO();
-        Map<String, Object> hits = new LinkedHashMap<>();
-
-        data.put("gameState", "PLACESHIPS");
-
-        // Agrego a 'data' el DTO de Ship.
-        data.put("ships", gamePlayerRepository.getOne(gamePlayerId).getShips().stream().map(ship -> ship.makeShipDTO()).collect(Collectors.toList()));
-
-        // Desde gamePlayerRepository, consigo un gamePlayer por ID. Desde ahi, entro a game, luego consigo los gamePlayers y para cada player, consigo sus salvoes.
-        // Luego, realizo otro map y para cada salvo, llamo al metodo DTO de la clase Salvo.
-        data.put("salvoes", gamePlayerRepository.getOne(gamePlayerId).getGame().getGamePlayers().stream().flatMap(player -> player.getSalvoes().stream().map(salvo -> salvo.makeSalvoDTO())).collect(Collectors.toList()));
 
         Optional<GamePlayer> gamePlayer = gamePlayerRepository.findById(gamePlayerId);
         Optional<GamePlayer> opponent = gamePlayer.get().getGame().findOpponent(gamePlayer.get());
+
+        Map<String, Object> data = gamePlayerRepository.getOne(gamePlayerId).getGame().makeGameDTO();
+        Map<String, Object> hits = new LinkedHashMap<>();
+
         if (opponent.isPresent()) {
 
-            hits.put("self", hitsAndSinks(opponent.get(), gamePlayer.get()));
-            hits.put("opponent", hitsAndSinks(gamePlayer.get(), opponent.get()));
+            hits.put("self", hitsAndSunks(gamePlayer.get(), opponent.get()));
+            hits.put("opponent", hitsAndSunks(opponent.get(), gamePlayer.get()));
         } else {
 
             hits.put("self", new ArrayList<>());
             hits.put("opponent", new ArrayList<>());
         }
 
+        data.put("gameState", getState(gamePlayer.get()));
+        data.put("ships", gamePlayerRepository.getOne(gamePlayerId).getShips().stream().map(ship -> ship.makeShipDTO()).collect(Collectors.toList()));
+        data.put("salvoes", gamePlayerRepository.getOne(gamePlayerId).getGame().getGamePlayers().stream().flatMap(player -> player.getSalvoes().stream().map(salvo -> salvo.makeSalvoDTO())).collect(Collectors.toList()));
         data.put("hits", hits);
 
         return data;
