@@ -34,7 +34,7 @@ public class SalvoController {
         return Utils.makeMap("salvoes", gamePlayerRepository.getOne(gamePlayerId).getGame().getGamePlayers().stream().flatMap(player -> player.getSalvoes().stream().map(salvo -> salvo.makeSalvoDTO())).collect(Collectors.toList()));
     }
 
-    @PostMapping("/games/players/{gamePlayerId}/salvos")
+    @PostMapping("/games/players/{gamePlayerId}/salvoes")
     public ResponseEntity<Map<String, Object>> placeSalvoes(@PathVariable Long gamePlayerId, @RequestBody Salvo salvo, Authentication authentication) {
 
         ResponseEntity<Map<String, Object>> response;
