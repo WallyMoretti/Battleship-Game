@@ -94,60 +94,6 @@ public class SalvoApplication extends SpringBootServletInitializer {
             // Game 8
             GamePlayer gamePlayer13 = gamePlayerRepository.save(new GamePlayer(player3, game8)); // kim_bauer vs _________
             GamePlayer gamePlayer14 = gamePlayerRepository.save(new GamePlayer(player4, game8)); // _________ vs t.almeida
-
-
-            // -- Ship -- //
-            // Game 1
-            Ship ship1 = shipRepository.save(new Ship(ShipType.SUBMARINE, gamePlayer1, Arrays.asList("E1", "F1", "G1")));
-            Ship ship2 = shipRepository.save(new Ship(ShipType.PATROL_BOAT, gamePlayer1, Arrays.asList("B4", "B5")));
-            Ship ship3 = shipRepository.save(new Ship(ShipType.DESTROYER, gamePlayer2, Arrays.asList("B5", "C5", "D5")));
-            Ship ship4 = shipRepository.save(new Ship(ShipType.PATROL_BOAT, gamePlayer2, Arrays.asList("F1", "F2")));
-
-            // Game 2
-            Ship ship5 = shipRepository.save(new Ship(ShipType.DESTROYER, gamePlayer3, Arrays.asList("B5", "C5", "D5")));
-            Ship ship6 = shipRepository.save(new Ship(ShipType.PATROL_BOAT, gamePlayer3, Arrays.asList("C6", "C7")));
-            Ship ship7 = shipRepository.save(new Ship(ShipType.SUBMARINE, gamePlayer4, Arrays.asList("A2", "A3", "A4")));
-            Ship ship8 = shipRepository.save(new Ship(ShipType.PATROL_BOAT, gamePlayer4, Arrays.asList("G6", "H6")));
-
-            // Game 3
-            Ship ship9 = shipRepository.save(new Ship(ShipType.DESTROYER, gamePlayer5, Arrays.asList("B5", "C5", "D5")));
-            Ship ship10 = shipRepository.save(new Ship(ShipType.PATROL_BOAT, gamePlayer5, Arrays.asList("C6", "C7")));
-            Ship ship11 = shipRepository.save(new Ship(ShipType.SUBMARINE, gamePlayer6, Arrays.asList("A2", "A3", "A4")));
-            Ship ship12 = shipRepository.save(new Ship(ShipType.PATROL_BOAT, gamePlayer6, Arrays.asList("G6", "H6")));
-
-
-            // -- Salvo -- //
-            // Game 1
-            Salvo salvo1 = salvoRepository.save(new Salvo(1, gamePlayer1, Arrays.asList("B5", "C5", "F1")));
-            Salvo salvo2 = salvoRepository.save(new Salvo(1, gamePlayer2, Arrays.asList("B4", "B5", "B6")));
-            Salvo salvo3 = salvoRepository.save(new Salvo(2, gamePlayer1, Arrays.asList("F2", "D5")));
-            Salvo salvo4 = salvoRepository.save(new Salvo(2, gamePlayer2, Arrays.asList("E1", "H3", "A2")));
-
-            // Game 2
-            Salvo salvo5 = salvoRepository.save(new Salvo(1, gamePlayer3, Arrays.asList("A2", "A4", "G6")));
-            Salvo salvo6 = salvoRepository.save(new Salvo(1, gamePlayer4, Arrays.asList("B5", "D5", "C7")));
-            Salvo salvo7 = salvoRepository.save(new Salvo(2, gamePlayer3, Arrays.asList("A3", "H6")));
-            Salvo salvo8 = salvoRepository.save(new Salvo(2, gamePlayer4, Arrays.asList("C5", "C6")));
-
-            // Game 3
-            Salvo salvo9 = salvoRepository.save(new Salvo(1, gamePlayer5, Arrays.asList("G6", "H6", "A4")));
-            Salvo salvo10 = salvoRepository.save(new Salvo(1, gamePlayer6, Arrays.asList("H1", "H2", "H3")));
-            Salvo salvo11 = salvoRepository.save(new Salvo(2, gamePlayer5, Arrays.asList("A2", "A3", "D8")));
-            Salvo salvo12 = salvoRepository.save(new Salvo(2, gamePlayer6, Arrays.asList("E1", "F2", "G3")));
-
-
-            // -- Score -- //
-            // Game 1
-            Score score1 = scoreRepository.save(new Score(game1, player1, 1, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"))));
-            Score score2 = scoreRepository.save(new Score(game1, player2, 0, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"))));
-
-            // Game 2
-            Score score3 = scoreRepository.save(new Score(game2, player1, 0.5, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(1)));
-            Score score4 = scoreRepository.save(new Score(game2, player2, 0.5, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(1)));
-
-            // Game 3
-            Score score5 = scoreRepository.save(new Score(game3, player2, 1, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2)));
-            Score score6 = scoreRepository.save(new Score(game3, player4, 0, LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")).plusHours(2)));
         };
     }
 
