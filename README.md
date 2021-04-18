@@ -31,5 +31,9 @@ En cada partida se determinará un __ganador__ y un __perdedor__, o un __empate 
 
   * Descargar e instalar IDE de preferencia. Se recomienda __IntelliJ IDEA__
 
+  * Se podrá acceder al proyecto desde la siguiente url:
+
+     :globe_with_meridians: <http://localhost:8080/web/games.html>
+
 ***
 #### :computer:  Proyecto realizado por Walter Moretti <https://github.com/WallyMoretti>
